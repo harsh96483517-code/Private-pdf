@@ -231,7 +231,7 @@ fun HomeScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         FilterChips(filter) { vm.filterMode.value = it }
-                        DateFilterMenu(date) { vm.dateFilter.value = it }
+                        DateFilterMenu(date, onSelect = { vm.dateFilter.value = it })
                         SortMenu(settings, onSort = { f, d -> vm.setSort(f, d) })
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {

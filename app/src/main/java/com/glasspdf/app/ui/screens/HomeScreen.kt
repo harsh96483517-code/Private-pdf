@@ -50,6 +50,7 @@ import com.glasspdf.app.domain.filterPdfs
 import com.glasspdf.app.domain.recentPdfs
 import com.glasspdf.app.domain.sortPdfs
 import com.glasspdf.app.ui.components.AddPdfMenu
+import com.glasspdf.app.ui.components.AppLogo
 import com.glasspdf.app.ui.components.DateFilterMenu
 import com.glasspdf.app.ui.components.FilterChips
 import com.glasspdf.app.ui.components.GRID_COLUMNS
@@ -151,10 +152,7 @@ fun HomeScreen(
                     )
                 } else {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Box(
-                            Modifier.size(42.dp).glass(androidx.compose.foundation.shape.CircleShape, strong = true),
-                            contentAlignment = Alignment.Center
-                        ) { Icon(Icons.Rounded.PictureAsPdf, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp)) }
+                        AppLogo(42.dp)
                         Text("GlassPDF", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
                         GlassIconButton(Icons.Rounded.Search, "Search", onClick = onSearch)
                         AddPdfMenu(vm)

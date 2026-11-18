@@ -1,6 +1,7 @@
 package com.glasspdf.app.ui.components
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -53,13 +54,13 @@ const val COVER_RATIO = 0.72f
 @Composable
 fun CoverPlaceholder(title: String, modifier: Modifier = Modifier) {
     val dark = LocalIsDark.current
-    val colors = if (dark) listOf(Color(0xFF3B3487), Color(0xFF1C2A5E)) else listOf(Color(0xFFB9B0FF), Color(0xFF9CC9FF))
+    val colors = if (dark) listOf(Color(0xFF2E2E33), Color(0xFF111113)) else listOf(Color(0xFFDADADF), Color(0xFFF4F4F6))
     Box(modifier.fillMaxSize().background(Brush.linearGradient(colors)), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(Icons.Rounded.PictureAsPdf, null, tint = Color.White.copy(alpha = 0.85f), modifier = Modifier.size(34.dp))
+            Icon(Icons.Rounded.PictureAsPdf, null, tint = if (dark) Color.White.copy(alpha = 0.85f) else Color.Black.copy(alpha = 0.70f), modifier = Modifier.size(34.dp))
             Text(
                 title.take(2).uppercase(),
-                color = Color.White.copy(alpha = 0.85f),
+                color = if (dark) Color.White.copy(alpha = 0.85f) else Color.Black.copy(alpha = 0.70f),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 4.dp)
@@ -75,7 +76,7 @@ fun PdfCoverImage(pdf: PdfEntity, modifier: Modifier = Modifier) {
     val bitmap by produceState<ImageBitmap?>(null, pdf.id, pdf.customCoverPath, pdf.uri) {
         value = thumbs.cover(pdf)?.asImageBitmap()
     }
-    Crossfade(targetState = bitmap, modifier = modifier, label = "cover") { bmp ->
+    Crossfade(targetState = bitmap, modifier = modifier, animationSpec = tween(320), label = "cover") { bmp ->
         if (bmp != null) {
             Image(
                 bitmap = bmp,
@@ -154,13 +155,17 @@ fun PdfCover(
             )
         }
         if (pdf.isFavorite) {
-            Icon(
-                Icons.Rounded.Star, null, tint = Color(0xFFFFD35C),
-                modifier = Modifier
+            Box(
+                Modifier
                     .align(Alignment.TopEnd)
                     .padding(6.dp)
-                    .size(20.dp)
-            )
+                    .size(22.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.55f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Rounded.Star, null, tint = Color.White, modifier = Modifier.size(15.dp))
+            }
         }
         if (pdf.broken) {
             Icon(

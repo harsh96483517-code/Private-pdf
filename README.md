@@ -1,6 +1,6 @@
 # GlassPDF — Premium offline PDF reader & smart library
 
-Kotlin · Jetpack Compose · Material 3 · Room · Navigation Compose · Storage Access Framework · PdfRenderer + PdfBox-Android (text).
+Black & white glass design (light + dark) · Kotlin · Jetpack Compose · Material 3 · Room · Navigation Compose · Storage Access Framework · PdfRenderer + PdfBox-Android (text).
 
 ## Build the APK with GitHub (no Android Studio needed)
 

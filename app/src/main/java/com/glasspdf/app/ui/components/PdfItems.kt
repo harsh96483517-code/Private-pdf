@@ -50,6 +50,7 @@ import com.glasspdf.app.data.LayoutMode
 import com.glasspdf.app.data.PdfEntity
 import com.glasspdf.app.data.title
 import com.glasspdf.app.ui.theme.SectionHeader
+import com.glasspdf.app.ui.theme.appear
 import com.glasspdf.app.ui.theme.bouncyClick
 import com.glasspdf.app.ui.theme.glass
 import com.glasspdf.app.util.formatSize
@@ -121,7 +122,7 @@ private fun PdfUi.longClickFor(pdf: PdfEntity): (() -> Unit)? =
 
 @Composable
 fun PdfGridItem(pdf: PdfEntity, ui: PdfUi, modifier: Modifier = Modifier) {
-    Column(modifier.then(ui.extra(pdf))) {
+    Column(modifier.appear().then(ui.extra(pdf))) {
         PdfCover(
             pdf, ui.settings,
             Modifier
@@ -150,6 +151,7 @@ fun PdfGridItem(pdf: PdfEntity, ui: PdfUi, modifier: Modifier = Modifier) {
 fun PdfListItem(pdf: PdfEntity, ui: PdfUi, modifier: Modifier = Modifier) {
     Row(
         modifier
+            .appear()
             .then(ui.extra(pdf))
             .fillMaxWidth()
             .glass(RoundedCornerShape(22.dp))
@@ -175,7 +177,7 @@ fun PdfListItem(pdf: PdfEntity, ui: PdfUi, modifier: Modifier = Modifier) {
 @Composable
 fun PdfLargeItem(pdf: PdfEntity, ui: PdfUi, modifier: Modifier = Modifier) {
     Column(
-        modifier.then(ui.extra(pdf)).fillMaxWidth(),
+        modifier.appear().then(ui.extra(pdf)).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PdfCover(

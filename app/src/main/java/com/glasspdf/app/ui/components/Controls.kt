@@ -83,13 +83,13 @@ fun LayoutSelector(current: LayoutMode, onSelect: (LayoutMode) -> Unit, modifier
                 Modifier
                     .size(38.dp)
                     .clip(CircleShape)
-                    .background(if (sel) primary.copy(alpha = 0.32f) else Color.Transparent)
+                    .background(if (sel) primary else Color.Transparent)
                     .clickable { onSelect(m) },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     layoutIcon(m), m.label,
-                    tint = if (sel) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = if (sel) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
             }

@@ -57,6 +57,7 @@ import androidx.compose.foundation.clickable
 import com.glasspdf.app.data.FolderEntity
 import com.glasspdf.app.data.PdfEntity
 import com.glasspdf.app.domain.FolderTree
+import com.glasspdf.app.ui.theme.appear
 import com.glasspdf.app.ui.theme.bouncyClick
 import com.glasspdf.app.ui.theme.glass
 import com.glasspdf.app.ui.vm.MainViewModel
@@ -85,7 +86,7 @@ fun FolderCard(
 ) {
     val primary = MaterialTheme.colorScheme.primary
     var menuOpen by remember { mutableStateOf(false) }
-    Column(modifier) {
+    Column(modifier.appear()) {
         Box(
             Modifier
                 .fillMaxWidth()

@@ -70,14 +70,15 @@ import com.glasspdf.app.ui.vm.ArrangeState
 import com.glasspdf.app.ui.vm.ArrangeViewModel
 import com.glasspdf.app.ui.vm.UiGroup
 
-private val Good = Color(0xFF3DDC97)
-private val Medium = Color(0xFFFFC857)
-private val Low = Color(0xFFFF7A7A)
-
-private fun confColor(c: Float): Color = when {
-    c >= 0.75f -> Good
-    c >= 0.55f -> Medium
-    else -> Low
+/** Monochrome confidence: strong = full contrast, weak = faded. */
+@Composable
+private fun confColor(c: Float): Color {
+    val base = MaterialTheme.colorScheme.onSurface
+    return when {
+        c >= 0.75f -> base
+        c >= 0.55f -> base.copy(alpha = 0.72f)
+        else -> base.copy(alpha = 0.48f)
+    }
 }
 
 @Composable
@@ -154,7 +155,7 @@ fun ArrangeScreen(onBack: () -> Unit, onShowFolders: () -> Unit, vm: ArrangeView
                                 if (progress != null || s.analyzing) {
                                     Text(
                                         "Still reading some PDFs — tap Re-scan when it finishes for better results.",
-                                        style = MaterialTheme.typography.bodySmall, color = Medium
+                                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }

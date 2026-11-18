@@ -1,6 +1,8 @@
 package com.glasspdf.app.ui.theme
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
@@ -26,8 +28,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -51,10 +56,10 @@ val CardShape = RoundedCornerShape(28.dp)
 @Composable
 fun GlassBackground(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
     val dark = LocalIsDark.current
-    val base = if (dark) listOf(Color(0xFF0A0B18), Color(0xFF14153A)) else listOf(Color(0xFFEFF2FF), Color(0xFFF8F1FF))
-    val c1 = if (dark) Color(0xFF7C5CFF).copy(alpha = 0.42f) else Color(0xFF9DB0FF).copy(alpha = 0.70f)
-    val c2 = if (dark) Color(0xFF2D9CFF).copy(alpha = 0.28f) else Color(0xFFFFB8DC).copy(alpha = 0.60f)
-    val c3 = if (dark) Color(0xFFFF5CA8).copy(alpha = 0.20f) else Color(0xFF9EE2FF).copy(alpha = 0.60f)
+    val base = if (dark) listOf(Color(0xFF000000), Color(0xFF0C0C0F)) else listOf(Color(0xFFFFFFFF), Color(0xFFECECF0))
+    val c1 = if (dark) Color.White.copy(alpha = 0.11f) else Color(0xFFB9B9C2).copy(alpha = 0.50f)
+    val c2 = if (dark) Color(0xFF8C8C96).copy(alpha = 0.13f) else Color.White.copy(alpha = 0.95f)
+    val c3 = if (dark) Color.White.copy(alpha = 0.07f) else Color(0xFFCACAD2).copy(alpha = 0.45f)
     Box(
         modifier
             .fillMaxSize()
@@ -82,10 +87,10 @@ fun GlassBackground(modifier: Modifier = Modifier, content: @Composable BoxScope
 @Composable
 fun Modifier.glass(shape: Shape = CardShape, strong: Boolean = false): Modifier {
     val dark = LocalIsDark.current
-    val topFill = if (dark) Color.White.copy(alpha = if (strong) 0.20f else 0.13f) else Color.White.copy(alpha = if (strong) 0.78f else 0.58f)
-    val bottomFill = if (dark) Color.White.copy(alpha = if (strong) 0.09f else 0.05f) else Color.White.copy(alpha = if (strong) 0.52f else 0.34f)
-    val borderTop = if (dark) Color.White.copy(alpha = 0.42f) else Color.White.copy(alpha = 0.95f)
-    val borderBottom = if (dark) Color.White.copy(alpha = 0.07f) else Color.White.copy(alpha = 0.40f)
+    val topFill = if (dark) Color.White.copy(alpha = if (strong) 0.17f else 0.10f) else Color.White.copy(alpha = if (strong) 0.82f else 0.66f)
+    val bottomFill = if (dark) Color.White.copy(alpha = if (strong) 0.07f else 0.04f) else Color.White.copy(alpha = if (strong) 0.58f else 0.42f)
+    val borderTop = if (dark) Color.White.copy(alpha = 0.34f) else Color.White.copy(alpha = 1f)
+    val borderBottom = if (dark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.09f)
     return this
         .clip(shape)
         .background(Brush.verticalGradient(listOf(topFill, bottomFill)))
@@ -139,7 +144,8 @@ fun GlassIconButton(
     tint: Color = MaterialTheme.colorScheme.onSurface,
     selected: Boolean = false
 ) {
-    val bg = if (selected) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.28f), CircleShape) else Modifier
+    val bg = if (selected) Modifier.background(MaterialTheme.colorScheme.primary, CircleShape) else Modifier
+    val iconTint = if (selected) MaterialTheme.colorScheme.onPrimary else tint
     Box(
         modifier
             .size(size)
@@ -148,7 +154,7 @@ fun GlassIconButton(
             .bouncyClick(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Icon(icon, contentDescription, tint = tint, modifier = Modifier.size(size * 0.52f))
+        Icon(icon, contentDescription, tint = iconTint, modifier = Modifier.size(size * 0.52f))
     }
 }
 
@@ -162,11 +168,11 @@ fun GlassPill(
     onLongClick: (() -> Unit)? = null
 ) {
     val primary = MaterialTheme.colorScheme.primary
-    val content = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+    val content = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     Row(
         modifier
             .glass(PillShape)
-            .then(if (selected) Modifier.background(primary.copy(alpha = 0.30f)) else Modifier)
+            .then(if (selected) Modifier.background(primary) else Modifier)
             .bouncyClick(onLongClick = onLongClick, onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 9.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -177,23 +183,38 @@ fun GlassPill(
     }
 }
 
-/** Accent pill (used for the floating Auto Arrange action). */
+/** Primary action pill: white on dark, black on light. */
 @Composable
 fun AccentPill(text: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val a = MaterialTheme.colorScheme.primary
-    val b = MaterialTheme.colorScheme.secondary
+    val bg = MaterialTheme.colorScheme.primary
+    val fg = MaterialTheme.colorScheme.onPrimary
     Row(
         modifier
             .clip(PillShape)
-            .background(Brush.horizontalGradient(listOf(a, b)))
-            .border(1.dp, Color.White.copy(alpha = 0.45f), PillShape)
+            .background(Brush.verticalGradient(listOf(bg, bg.copy(alpha = 0.90f))))
+            .border(1.dp, fg.copy(alpha = 0.18f), PillShape)
             .bouncyClick(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 13.dp),
+            .padding(horizontal = 22.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Icon(icon, null, tint = Color.White, modifier = Modifier.size(20.dp))
-        Text(text, color = Color.White, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold))
+        Icon(icon, null, tint = fg, modifier = Modifier.size(20.dp))
+        Text(text, color = fg, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold))
+    }
+}
+
+/** Soft fade-and-rise when an item first appears. */
+fun Modifier.appear(): Modifier = composed {
+    var shown by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { shown = true }
+    val progress by animateFloatAsState(
+        targetValue = if (shown) 1f else 0f,
+        animationSpec = tween(durationMillis = 380, easing = FastOutSlowInEasing),
+        label = "appear"
+    )
+    this.graphicsLayer {
+        alpha = progress
+        translationY = (1f - progress) * 28f
     }
 }
 

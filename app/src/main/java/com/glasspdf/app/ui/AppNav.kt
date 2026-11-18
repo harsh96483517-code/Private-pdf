@@ -2,7 +2,9 @@ package com.glasspdf.app.ui
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -104,10 +106,10 @@ fun GlassPdfRoot(vm: MainViewModel) {
         NavHost(
             navController = nav,
             startDestination = Routes.HOME,
-            enterTransition = { fadeIn(tween(220)) },
-            exitTransition = { fadeOut(tween(160)) },
-            popEnterTransition = { fadeIn(tween(220)) },
-            popExitTransition = { fadeOut(tween(160)) }
+            enterTransition = { fadeIn(tween(280)) + scaleIn(tween(280), initialScale = 0.97f) },
+            exitTransition = { fadeOut(tween(180)) },
+            popEnterTransition = { fadeIn(tween(280)) + scaleIn(tween(280), initialScale = 0.97f) },
+            popExitTransition = { fadeOut(tween(180)) }
         ) {
             composable(Routes.HOME) {
                 HomeScreen(
@@ -173,25 +175,22 @@ private fun GlassNavBar(current: String?, onSelect: (String) -> Unit) {
     ) {
         Tabs.forEach { t ->
             val selected = current == t.route
+            val pillColor by animateColorAsState(if (selected) primary else Color.Transparent, tween(260), label = "tabBg")
+            val contentColor by animateColorAsState(
+                if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                tween(260), label = "tabFg"
+            )
             Column(
                 Modifier
                     .weight(1f)
                     .clip(PillShape)
-                    .background(if (selected) primary.copy(alpha = 0.26f) else Color.Transparent)
+                    .background(pillColor)
                     .clickable { onSelect(t.route) }
                     .padding(vertical = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    t.icon, t.label,
-                    tint = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(22.dp)
-                )
-                Text(
-                    t.label,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Icon(t.icon, t.label, tint = contentColor, modifier = Modifier.size(22.dp))
+                Text(t.label, style = MaterialTheme.typography.labelSmall, color = contentColor)
             }
         }
     }
